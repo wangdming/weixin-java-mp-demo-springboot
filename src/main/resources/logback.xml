@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <jmxConfigurator/>
+
+    <springProfile name="dev">
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <Pattern>
+                    %d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+                </Pattern>
+            </layout>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </springProfile>
+
+    <property name="ZEQIAN_LOG_FILE" value="zeqian-wx"/>
+    <property name="ZEQIAN_FILE_LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} | %5p | ${PID:- } | [%t] | %-40.40logger{50} | %X{ip} | %X{cip} | %X{user} | %X{token} | %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%rEx}"/>
+
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+            </Pattern>
+        </layout>
+    </appender>
+    <appender name="${ZEQIAN_LOG_FILE}-info"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>${ZEQIAN_FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <file>${ZEQIAN_LOG_FILE}-info.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>./log/info-%d{yyyy-MM-dd}-info.log</fileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="${ZEQIAN_LOG_FILE}-error"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>${ZEQIAN_FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <file>${ZEQIAN_LOG_FILE}-error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>./log/error-%d{yyyy-MM-dd}-error.log</fileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="${ZEQIAN_LOG_FILE}-warn"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>${ZEQIAN_FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <file>${ZEQIAN_LOG_FILE}-warn.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>./log/warn-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="${ZEQIAN_LOG_FILE}-debug"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>${ZEQIAN_FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <file>${ZEQIAN_LOG_FILE}-debug.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>./log/debug-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="USER_ACCESS_LOG"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} | %msg%n</Pattern>
+            <immediateFlush>true</immediateFlush>
+        </encoder>
+        <file>${ZEQIAN_LOG_FILE}-access.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>./log/accesslog/%d{yyyy-MM-dd}.log</FileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <logger name="acccess_log" level="info" additivity="false">
+        <appender-ref ref="USER_ACCESS_LOG"/>
+    </logger>
+
+    <logger name="org.springframework.web" level="INFO" additivity="false">
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-info"/>
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-warn"/>
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-error"/>
+    </logger>
+
+    <logger name="org.springframework.boot" level="INFO" additivity="false">
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-info"/>
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-warn"/>
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-error"/>
+    </logger>
+
+    <logger name="com.zq" level="DEBUG"
+            additivity="false">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-info"/>
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-warn"/>
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-error"/>
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-debug"/>
+    </logger>
+
+    <logger name="org.apache.http" level="INFO" additivity="false">
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-info"/>
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-warn"/>
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-error"/>
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-debug"/>
+    </logger>
+
+    <logger name="swagger" level="ERROR" additivity="false">
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-info"/>
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-warn"/>
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-error"/>
+    </logger>
+
+    <logger name="org.flywaydb" level="INFO" additivity="false">
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-info"/>
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-warn"/>
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-error"/>
+    </logger>
+
+    <logger name="p6spy" level="INFO" additivity="false">
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-info"/>
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-warn"/>
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-error"/>
+    </logger>
+
+    <root level="ERROR">
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-info"/>
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-warn"/>
+        <appender-ref ref="${ZEQIAN_LOG_FILE}-error"/>
+    </root>
+
+</configuration>

@@ -121,7 +121,7 @@ public class MsgHandler extends AbstractHandler {
         // 储存token
         UserState.putToken(openId, res.getToken());
 
-        return resMsg(wxMessage, "绑定成功。\n当有新业务需要您处理时，将为您推送消息提醒。");
+        return resMsg(wxMessage, "绑定成功。");
     }
 
     private AuthTokenResponse sendSmsCode(int userType, String openId, String mobile) {
@@ -187,7 +187,7 @@ public class MsgHandler extends AbstractHandler {
 
         // 如果扫描件返回空，提示"检查快递单号"
         if (materialUploadRes.getMediaIds().isEmpty()) {
-            return resMsg(wxMessage, "扫描件不存在，请检查快递单号。");
+            return resMsg(wxMessage, "查询码错误，请您重新输入：");
         }
 
         // 循环推送票据扫描件
@@ -202,7 +202,7 @@ public class MsgHandler extends AbstractHandler {
         }
 
         // 如果票据过多，最后提示"请前往小程序"
-        if (materialUploadRes.isMoreThanFive()) {
+        if (materialUploadRes.isToMuchScans()) {
             WxMpKefuMessage msg = WxMpKefuMessage.TEXT().toUser(openId)
                 .content("票据过多，请前往Web端或小程序查看详细信息。").build();
             try {
@@ -215,8 +215,13 @@ public class MsgHandler extends AbstractHandler {
 
         UserState.finishCheckScans(3, openId);
 
-//        return resMsg(wxMessage, "success");
-        return emptyRes();
+        try {
+            // 为防止"扫描件发送完毕。"后发先至，这里延迟1秒
+            Thread.sleep(1000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resMsg(wxMessage, "扫描件发送完毕。");
     }
 
     private MaterialUploadResponse uploadImages(String openId, String accessToken, String fetchNo) {

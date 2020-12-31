@@ -49,9 +49,14 @@ public class MenuHandler extends AbstractHandler {
         String eventKey = wxMessage.getEventKey();
 
         if (eventKey.equals(Constants.MENU_KEY_BIND_MOBILE_USER_TYPE_3)) {
+            // fg绑定手机号
             return bindMobile(wxMessage, wxMpService);
         } else if (eventKey.equals(Constants.MENU_KEY_SHOW_TICKET_SCANS)) {
+            // fg查询扫描件
             return showTicketScans(wxMessage, wxMpService);
+        } else if (eventKey.equals(Constants.MENU_KEY_BIND_MOBILE_USER_TYPE_1)) {
+            // bg绑定手机号
+            return bindMobile(wxMessage, wxMpService);
         } else {
             return resMsg(wxMessage, "不支持此操作");
         }

@@ -66,7 +66,7 @@ public class SubscribeHandler extends AbstractHandler {
         }
 
         try {
-            return new TextBuilder().build("感谢关注", wxMessage, wxMpService);
+            return new TextBuilder().build("感谢您的关注。\n请点击底部菜单绑定手机号，即可接收实时业务通知。", wxMessage, wxMpService);
         } catch (Exception e) {
             this.logger.error(e.getMessage(), e);
         }

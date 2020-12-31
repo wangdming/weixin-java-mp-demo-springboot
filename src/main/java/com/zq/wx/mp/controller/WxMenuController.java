@@ -24,7 +24,6 @@ import static me.chanjar.weixin.common.api.WxConsts.MenuButtonType;
  */
 @AllArgsConstructor
 @RestController
-//@RequestMapping("/wx/menu/{appid}")
 @RequestMapping("/api/wx-pa/menu/{appid}")
 public class WxMenuController {
 
@@ -47,27 +46,6 @@ public class WxMenuController {
     private WxMenu buildMenu(String appid) {
         WxMenu menu = new WxMenu();
 
-        WxMenuButton button1 = new WxMenuButton();
-        button1.setName("绑定手机号");
-        button1.setType(MenuButtonType.CLICK);
-
-        WxMenuButton button2 = new WxMenuButton();
-        button2.setName("查看扫描件");
-        button2.setType(MenuButtonType.CLICK);
-
-        // NOTE token 使用UserState.getToken取token
-        // NOTE 要求用户必须绑定了手机号
-        // NOTE 跳转不能带TOKEN GG
-        WxMenuButton button3 = new WxMenuButton();
-        button3.setName("进入小程序");
-        button3.setKey(Constants.MENU_KEY_SKIP_TO_MP);
-        button3.setType(MenuButtonType.MINIPROGRAM);
-        button3.setUrl("www.baidu.com"); // 不支持小程序的老版客户端将跳转至这个url，无实际意义，但必填
-
-        menu.getButtons().add(button1);
-        menu.getButtons().add(button2);
-        menu.getButtons().add(button3);
-
         switch (appid) {
             case Constants.PA_APP_ID_FG:
                 buildMenu_fg(menu);
@@ -86,18 +64,96 @@ public class WxMenuController {
     }
 
     private void buildMenu_fg(WxMenu menu) {
-        menu.getButtons().get(0).setKey(Constants.MENU_KEY_BIND_MOBILE_USER_TYPE_3);
-        menu.getButtons().get(1).setKey(Constants.MENU_KEY_SHOW_TICKET_SCANS);
-        // TODO token
-        // TODO page path
-        // TODO 小程序更新前不打开
-        menu.getButtons().get(2).setAppId(Constants.MP_APP_ID_FG);
-        menu.getButtons().get(2).setPagePath("/pages/billAuthority/billAuthority");
+        WxMenuButton button1 = new WxMenuButton();
+        button1.setName("绑定手机号");
+        button1.setType(MenuButtonType.CLICK);
+        button1.setKey(Constants.MENU_KEY_BIND_MOBILE_USER_TYPE_3);
+        menu.getButtons().add(button1);
+
+        WxMenuButton button2 = new WxMenuButton();
+        button2.setName("查看扫描件");
+        button2.setType(MenuButtonType.CLICK);
+        button2.setKey(Constants.MENU_KEY_SHOW_TICKET_SCANS);
+        menu.getButtons().add(button2);
+
+        WxMenuButton button3 = new WxMenuButton();
+        button3.setName("进入小程序");
+        button3.setKey(Constants.MENU_KEY_SKIP_TO_MP_USER_TYPE_3);
+        button3.setType(MenuButtonType.MINIPROGRAM);
+        button3.setUrl("www.baidu.com"); // 不支持小程序的老版客户端将跳转至这个url，无实际意义，但必填
+        button3.setAppId(Constants.MP_APP_ID_FG);
+        button3.setPagePath("/pages/billAuthority/billAuthority");
+        menu.getButtons().add(button3);
     }
 
     private void buildMenu_mg(WxMenu menu) {}
 
-    private void buildMenu_bg(WxMenu menu) {}
+    private void buildMenu_bg(WxMenu menu) {
+        WxMenuButton button1 = new WxMenuButton();
+        button1.setName("绑定手机号");
+        button1.setType(MenuButtonType.CLICK);
+        button1.setKey(Constants.MENU_KEY_BIND_MOBILE_USER_TYPE_1);
+        menu.getButtons().add(button1);
+
+        WxMenuButton button2 = new WxMenuButton();
+        button2.setName("进入小程序");
+        button2.setKey(Constants.MENU_KEY_SKIP_TO_MP_USER_TYPE_1);
+        button2.setType(MenuButtonType.MINIPROGRAM);
+        button2.setUrl("www.baidu.com");
+        button2.setAppId(Constants.MP_APP_ID_BG);
+        button2.setPagePath("/pages/billAuthority/billAuthority");
+        menu.getButtons().add(button2);
+    }
+
+//    private WxMenu buildMenu(String appid) {
+//        WxMenu menu = new WxMenu();
+//
+//        WxMenuButton button1 = new WxMenuButton();
+//        button1.setName("绑定手机号");
+//        button1.setType(MenuButtonType.CLICK);
+//
+//        WxMenuButton button2 = new WxMenuButton();
+//        button2.setName("查看扫描件");
+//        button2.setType(MenuButtonType.CLICK);
+//
+//        // NOTE 从公众号跳转至小程序不能带TOKEN GG
+//        WxMenuButton button3 = new WxMenuButton();
+//        button3.setName("进入小程序");
+//        button3.setKey(Constants.MENU_KEY_SKIP_TO_MP);
+//        button3.setType(MenuButtonType.MINIPROGRAM);
+//        button3.setUrl("www.baidu.com"); // 不支持小程序的老版客户端将跳转至这个url，无实际意义，但必填
+//
+//        menu.getButtons().add(button1);
+//        menu.getButtons().add(button2);
+//        menu.getButtons().add(button3);
+//
+//        switch (appid) {
+//            case Constants.PA_APP_ID_FG:
+//                buildMenu_fg(menu);
+//                break;
+//            case Constants.PA_APP_ID_MG:
+//                buildMenu_mg(menu);
+//                break;
+//            case Constants.PA_APP_ID_BG:
+//                buildMenu_bg(menu);
+//                break;
+//            default:
+//                throw new IllegalArgumentException(String.format("未找到对应appid=[%s]的配置，请核实！", appid));
+//        }
+//
+//        return menu;
+//    }
+//
+//    private void buildMenu_fg(WxMenu menu) {
+//        menu.getButtons().get(0).setKey(Constants.MENU_KEY_BIND_MOBILE_USER_TYPE_3);
+//        menu.getButtons().get(1).setKey(Constants.MENU_KEY_SHOW_TICKET_SCANS);
+//        menu.getButtons().get(2).setAppId(Constants.MP_APP_ID_FG);
+//        menu.getButtons().get(2).setPagePath("/pages/billAuthority/billAuthority");
+//    }
+//
+//    private void buildMenu_mg(WxMenu menu) {}
+//
+//    private void buildMenu_bg(WxMenu menu) {}
 
     /**
      * <pre>
